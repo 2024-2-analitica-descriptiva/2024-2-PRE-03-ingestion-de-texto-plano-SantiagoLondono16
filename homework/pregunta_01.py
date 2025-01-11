@@ -18,6 +18,8 @@ def pregunta_01():
 
 
     """
+    import pandas as pd
+    import re
     read_lines = open('./files/input/clusters_report.txt', 'r').readlines()
     linea_procesada = [i.strip() for i in read_lines]
 
@@ -45,17 +47,13 @@ def pregunta_01():
 
         for first_list, string in data:
             if first_list:
-                # Si la primera lista no está vacía, creamos una nueva fila
                 if current_row[3]:
                     rows.append(current_row.copy())
                 current_row = first_list + [string]
             else:
-                # Si la primera lista está vacía, concatenamos el string a la fila actual
                 current_row[3] += ' ' + string
 
-        # Agregamos la última fila
         rows.append(current_row)
-        # Creamos el DataFrame
         df = pd.DataFrame(rows, columns=['cluster', 'cantidad_de_palabras_clave', 'porcentaje_de_palabras_clave',
                                          'principales_palabras_clave'])
         return df
