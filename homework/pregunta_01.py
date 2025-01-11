@@ -4,6 +4,9 @@ Escriba el codigo que ejecute la accion solicitada en cada pregunta.
 
 # pylint: disable=import-outside-toplevel
 
+import pandas as pd
+import re
+
 
 def pregunta_01():
     """
@@ -18,16 +21,14 @@ def pregunta_01():
 
 
     """
-    import pandas as pd
-    import re
-    read_lines = open('./files/input/clusters_report.txt', 'r').readlines()
-    linea_procesada = [i.strip() for i in read_lines]
+    abrir = open('./files/input/clusters_report.txt', 'r').readlines()
+    lineas_limpias = [linea.strip() for linea in abrir]
 
-    cont = []
-    for i in linea_procesada[2:]:
-        if i.strip():
-            data = i.split('\t')
-            cont.append(data)
+    data = []
+    for linea in lineas_limpias[2:]:
+        if linea.strip():
+            row_data = linea.split('\t')
+            data.append(row_data)
 
     def separate_numeric_and_text(list_of_lists):
         result = []
@@ -47,13 +48,17 @@ def pregunta_01():
 
         for first_list, string in data:
             if first_list:
+                # Si la primera lista no está vacía, creamos una nueva fila
                 if current_row[3]:
                     rows.append(current_row.copy())
                 current_row = first_list + [string]
             else:
+                # Si la primera lista está vacía, concatenamos el string a la fila actual
                 current_row[3] += ' ' + string
 
+        # Agregamos la última fila
         rows.append(current_row)
+        # Creamos el DataFrame
         df = pd.DataFrame(rows, columns=['cluster', 'cantidad_de_palabras_clave', 'porcentaje_de_palabras_clave',
                                          'principales_palabras_clave'])
         return df
@@ -69,3 +74,7 @@ def pregunta_01():
     df['porcentaje_de_palabras_clave'] = df['porcentaje_de_palabras_clave'].astype(float)
 
     return df
+
+
+if __name__ == "__main__":
+    print(pregunta_01())
